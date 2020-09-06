@@ -8,16 +8,16 @@ import (
 )
 
 func TestWhoisPositive(t *testing.T) {
-	// Only compare registry domain ID line to avoid test breaking due to time-dependent variables
-	expectedID := "Registry Domain ID: 56fef0bc77624f99aea63b0d0ca1c638-DONUTS"
+	// Only compare registry domain name line to avoid test breaking due to time-dependent variables
+	expectedDomain := "Domain Name: fishtech.group"
 	got, err := Whois("fishtech.group", "10s")
 
-	assert.IsType(t, nil, err)
-	assert.Equal(t, expectedID, strings.Split(got, "\r\n")[1])
+	assert.Nil(t, err)
+
+	assert.Equal(t, expectedDomain, strings.Split(got, "\r\n")[0])
 }
 
 func TestWhoisBadTLD(t *testing.T) {
-	// Only compare registry domain ID line to avoid test breaking due to time-dependent variables
 	expectedErr := "No whois server found for domain fishtech.grou"
 	_, err := Whois("fishtech.grou", "10s")
 
@@ -25,7 +25,6 @@ func TestWhoisBadTLD(t *testing.T) {
 }
 
 func TestWhoisBadFormat(t *testing.T) {
-	// Only compare registry domain ID line to avoid test breaking due to time-dependent variables
 	expectedErr := "fishtech is not a valid domain name"
 	_, err := Whois("fishtech", "10s")
 
@@ -33,9 +32,8 @@ func TestWhoisBadFormat(t *testing.T) {
 }
 
 func TestWhoisBadTimeout(t *testing.T) {
-	// Only compare registry domain ID line to avoid test breaking due to time-dependent variables
 	expectedErr := "time: unknown unit \"o\" in duration \"10o\""
 	_, err := Whois("fishtech.group", "10o")
-	
+
 	assert.Equal(t, err.Error(), expectedErr)
 }
