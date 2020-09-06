@@ -17,3 +17,30 @@ func TestWhoisPositive(t *testing.T) {
 		t.Errorf("Expected: %s, got: %s", expectedID, strings.Split(got, "\r\n")[1])
 	}
 }
+
+func TestWhoisBadTLD(t *testing.T) {
+	// Only compare registry domain ID line to avoid test breaking due to time-dependent variables
+	expectedErr := "No whois server found for domain fishtech.grou"
+	_, err := Whois("fishtech.grou", "10s")
+	if err.Error() != expectedErr {
+		t.Errorf("Expected: %s, got: %s", expectedErr, err.Error())
+	}
+}
+
+func TestWhoisBadFormat(t *testing.T) {
+	// Only compare registry domain ID line to avoid test breaking due to time-dependent variables
+	expectedErr := "fishtech is not a valid domain name"
+	_, err := Whois("fishtech", "10s")
+	if err.Error() != expectedErr {
+		t.Errorf("Expected: %s, got: %s", expectedErr, err.Error())
+	}
+}
+
+func TestWhoisBadTimeout(t *testing.T) {
+	// Only compare registry domain ID line to avoid test breaking due to time-dependent variables
+	expectedErr := "time: unknown unit \"o\" in duration \"10o\""
+	_, err := Whois("fishtech.group", "10o")
+	if err.Error() != expectedErr {
+		t.Errorf("Expected: %s, got: %s", expectedErr, err.Error())
+	}
+}
