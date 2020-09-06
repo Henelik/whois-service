@@ -1,18 +1,4 @@
-# terraform-lambda-go
-
-Sample project to build lambda API with Go and terraform
-
-## Requirements
-
-- [AWS CLI already configured with Administrator permission](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
-- [Golang](https://golang.org)
-- [Terraform](https://brewinstall.org/install-terraform-on-mac-with-brew/)
-
-> Ensure your terraform version must be more than 0.12.xxx
-
-## How to
-
-The following explain the support command in this project in Make file
+# Whois-Go
 
 ### How to build
 
