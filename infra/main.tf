@@ -1,5 +1,7 @@
 provider "aws" {
-  region = "ap-southeast-1"
+  access_key = "AKIAQXVZD7UZQAXXRMNR"
+  secret_key = "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"
+  region = "us-east-2"
 }
 
 variable "app_name" {

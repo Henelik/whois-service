@@ -5,16 +5,21 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"Henelik/whois-service/whois"
 )
 
-// Handler is your Lambda function handler
-// It uses Amazon API Gateway request/responses provided by the aws-lambda-go/events package,
-// However you could use other event sources (S3, Kinesis etc), or JSON-decoded primitive types such as 'string'.
+// Lambda function handler
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	// stdout and stderr are sent to AWS CloudWatch Logs
 	log.Printf("Processing Lambda request %t\n", request.RequestContext)
+	data, err := whois.Whois("fishtech.group", "10s")
+	if err != nil{
+		return events.APIGatewayProxyResponse{
+			Body:       err.Error(),
+			StatusCode: 500,
+		}, err
+	}
 	return events.APIGatewayProxyResponse{
-		Body:       "Hello world",
+		Body:       data,
 		StatusCode: 200,
 	}, nil
 }
