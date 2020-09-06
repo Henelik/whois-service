@@ -1,25 +1,58 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
+
+	"Henelik/whois-service/whois"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"Henelik/whois-service/whois"
 )
 
-// Lambda function handler
+// Handler function for AWS Lambda
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	log.Printf("Processing Lambda request %t\n", request.RequestContext)
-	data, err := whois.Whois("fishtech.group", "10s")
-	if err != nil{
+	log.Printf("Processing Lambda request %s\n", request.RequestContext)
+
+	var reqBody map[string]string
+
+	// check JSON is valid
+	if json.Valid([]byte(request.Body)) {
+		err := json.Unmarshal([]byte(request.Body), &reqBody)
+		if err != nil {
+			return events.APIGatewayProxyResponse{
+				Body:       err.Error(),
+				StatusCode: 500,
+			}, err
+		}
+	} else { // unmarshal valid JSON
+		return events.APIGatewayProxyResponse{
+			Body:       "Invalid json format",
+			StatusCode: 400,
+		}, nil
+	}
+
+	// ensure a specified domain field in request body
+	domain, ok := reqBody["domain"]
+	if !ok {
+		return events.APIGatewayProxyResponse{
+			Body:       "Please specify a domain in the body of your request",
+			StatusCode: 400,
+		}, nil
+	}
+
+	// look up whois info on domain
+	respBody, err := whois.Whois(domain, "10s")
+	if err != nil {
 		return events.APIGatewayProxyResponse{
 			Body:       err.Error(),
-			StatusCode: 500,
+			StatusCode: 400,
 		}, err
 	}
+
+	// successful return
 	return events.APIGatewayProxyResponse{
-		Body:       data,
+		Body:       respBody,
 		StatusCode: 200,
 	}, nil
 }
